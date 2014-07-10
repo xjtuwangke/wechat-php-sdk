@@ -3,12 +3,13 @@
     "description": "wechat developer SDK.",
     "authors": [
         {
-            "name": "dodge <dodgepudding@gmail.com>"
+            "name": "dodge",
+            "email": "dodgepudding@gmail.com"
         }
     ],
     "autoload": {
         "psr-0": {
-            "Wechat\\": "src/"
+            "Wechat": "src/"
         }
     },
     "require": {
