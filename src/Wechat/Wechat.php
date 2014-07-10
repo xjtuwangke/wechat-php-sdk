@@ -1050,20 +1050,68 @@ class Wechat
                 break;
             case self::MSGTYPE_EVENT:
                 $event = $this->getRevEvent();
-                if( strtolower( $event ) == 'click'){
-                    $controller->onClick( $this );
-                    break;
+                if( $event ){
+                    switch(  strtolower( $event['event'] ) ){
+                        case 'click':
+                            $method = 'onClick_' . strtolower( $event['key'] );
+                            $this->__call_controller( $controller , $method );
+                            break;
+                        case 'view':
+                            $this->__call_controller( $controller , 'onView' );
+                            break;
+                        case 'subscribe':
+                            $this->__call_controller( $controller , 'onSubscribe' );
+                            break;
+                        case 'unsubscribe':
+                            $this->__call_controller( $controller , 'onUnsubscribe' );
+                            break;
+                        default:
+                            $controller->onEvent( $this );
+                            break;
+                    }
                 }
                 else{
                     $controller->onEvent( $this );
-                    break;
                 }
+                break;
+            case self::MSGTYPE_LOCATION:
+                $this->__call_controller( $controller , 'onLocation' );
+                break;
             case self::MSGTYPE_IMAGE:
-                $controller->onImage( $this );
+                $this->__call_controller( $controller , 'onImage' );
+                break;
+            case self::MSGTYPE_MUSIC:
+                $this->__call_controller( $controller , 'onMusic' );
+                break;
+            case self::MSGTYPE_VIDEO:
+                $this->__call_controller( $controller , 'onVideo' );
+                break;
+            case self::MSGTYPE_LINK:
+                $this->__call_controller( $controller , 'onLink' );
                 break;
             default:
-                $controller->onOther( $this );
+                $controller->onUnKnown( $this );
         }
+    }
 
+
+    /**
+     * 调用controller中相应的method
+     * @param $controller
+     */
+    protected function __call_controller( Wechatable $controller , $method ){
+        if( method_exists( $controller , $method ) ){
+            call_user_func_array( array( $controller , $method ) , array( $this )  );
+        }
+        else{
+            if( $method == 'onNoMethod' ){
+                if( $this->debug ){
+                    $this->text("method {$method} Not Found")->reply();
+                }
+            }
+            else{
+                $this->__call_controller( $controller , 'onNoMethod' );
+            }
+        }
     }
 }

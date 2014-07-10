@@ -15,14 +15,10 @@ namespace Wechat;
 
 interface Wechatable {
 
-    public function onText( $wechat );
+    public function onText( Wechat $wechat );
 
-    public function onClick( $wechat );
+    public function onEvent( Wechat $wechat );
 
-    public function onEvent( $wechat );
-
-    public function onImage( $wechat );
-
-    public function onOther( $wechat );
+    public function onUnKnown( Wechat $wechat );
 
 } 
