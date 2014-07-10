@@ -1031,4 +1031,39 @@ class Wechat
         }
         return false;
     }
+
+    /**
+     * Ioc分析收到的消息 调用controller中相应的method
+     * @param $controller
+     */
+    public function server( $controller ){
+
+        if( $this->debug ){
+            $this->valid();
+        }
+
+        $type = $this->getRev()->getRevType();
+
+        switch( $type ){
+            case self::MSGTYPE_TEXT:
+                $controller->onText( $this )->replay();
+                break;
+            case self::MSGTYPE_EVENT:
+                $event = $this->getRevEvent();
+                if( strtolower( $event ) == 'click'){
+                    $controller->onClick( $this )->replay();
+                    break;
+                }
+                else{
+                    $controller->onEvent( $this )->replay();
+                    break;
+                }
+            case self::MSGTYPE_IMAGE:
+                $controller->onImage( $this )->replay();
+                break;
+            default:
+                $controller->onOther( $this )->replay();
+        }
+
+    }
 }
