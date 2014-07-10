@@ -1,6 +1,7 @@
 {
     "name": "xjtuwangke/wechat-sdk",
     "description": "wechat developer SDK.",
+    "license": "LGPL-2.1",
     "authors": [
         {
             "name": "dodge",
