@@ -1046,23 +1046,23 @@ class Wechat
 
         switch( $type ){
             case self::MSGTYPE_TEXT:
-                $controller->onText( $this )->replay();
+                $controller->onText( $this );
                 break;
             case self::MSGTYPE_EVENT:
                 $event = $this->getRevEvent();
                 if( strtolower( $event ) == 'click'){
-                    $controller->onClick( $this )->replay();
+                    $controller->onClick( $this );
                     break;
                 }
                 else{
-                    $controller->onEvent( $this )->replay();
+                    $controller->onEvent( $this );
                     break;
                 }
             case self::MSGTYPE_IMAGE:
-                $controller->onImage( $this )->replay();
+                $controller->onImage( $this );
                 break;
             default:
-                $controller->onOther( $this )->replay();
+                $controller->onOther( $this );
         }
 
     }
