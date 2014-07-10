@@ -3,7 +3,7 @@
  * 微信公共接口测试
  * 
  */
-	include("../wechat.class.php");
+	include("../src/Wechat.php");
 	
 	function logdebug($text){
 		file_put_contents('../data/log.txt',$text."\n",FILE_APPEND);		
@@ -13,7 +13,7 @@
 			'debug'=>true,
 			'logcallback'=>'logdebug'
 	);
-	$weObj = new Wechat($options);
+	$weObj = new Wechat\Wechat($options);
 	$weObj->valid();
 	$type = $weObj->getRev()->getRevType();
 	switch($type) {

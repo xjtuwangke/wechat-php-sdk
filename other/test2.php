@@ -2,7 +2,7 @@
 /**
  * 微信扩展接口测试
  */
-	include("../wechatext.class.php");
+    include("../src/Wechat.php");
 	
 	function logdebug($text){
 		file_put_contents('../data/log.txt',$text."\n",FILE_APPEND);		
@@ -15,7 +15,7 @@
 			'debug'=>true,
 			'logcallback'=>'logdebug'	
 	); 
-	$wechat = new Wechatext($options);
+	$wechat = new Wechat\Wechatext($options);
 	if ($wechat->checkValid()) {
 		//获取分组列表
 		$grouplist = $wechat->getGroupList();

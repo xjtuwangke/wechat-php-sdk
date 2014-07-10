@@ -1,0 +1,17 @@
+{
+    "name": "xjtuwangke/wechat-sdk",
+    "description": "wechat developer SDK.",
+    "authors": [
+        {
+            "name": "dodge <dodgepudding@gmail.com>"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Wechat\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.3"
+    }
+}
