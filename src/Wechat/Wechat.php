@@ -1036,7 +1036,7 @@ class Wechat
      * Ioc分析收到的消息 调用controller中相应的method
      * @param $controller
      */
-    public function server( $controller ){
+    public function server( Wechatable $controller ){
 
         if( $this->debug ){
             $this->valid();
