@@ -8,6 +8,8 @@
 
 namespace Wechat\Encrypt;
 
+use \Exception;
+
 
 /**
  * Prpcrypt class
@@ -17,6 +19,10 @@ namespace Wechat\Encrypt;
 class Prpcrypt
 {
     public $key;
+
+    function __construct( $k ){
+        $this->Prpcrypt( $k );
+    }
 
     function Prpcrypt($k)
     {

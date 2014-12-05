@@ -8,6 +8,8 @@
 
 namespace Wechat\Encrypt;
 
+use \Exception;
+
 
 /**
  * SHA1 class

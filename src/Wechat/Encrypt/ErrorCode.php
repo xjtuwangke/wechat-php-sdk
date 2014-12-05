@@ -6,7 +6,7 @@
  * Time: 01:47
  */
 
-namespace Wechat;
+namespace Wechat\Encrypt;
 
 
 /**

@@ -8,6 +8,9 @@
 
 namespace Wechat\Encrypt;
 
+use \Exception;
+use \DOMDocument;
+
 
 /**
  * XMLParse class
