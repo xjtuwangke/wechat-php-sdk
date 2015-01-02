@@ -123,6 +123,8 @@ class Wechat
     public $errMsg = "no access";
     private $_logcallback;
 
+    protected static $cache = null;
+
     public function __construct($options)
     {
         $this->token = isset($options['token'])?$options['token']:'';
@@ -134,6 +136,14 @@ class Wechat
         $this->paysignkey = isset($options['paysignkey'])?$options['paysignkey']:'';
         $this->debug = isset($options['debug'])?$options['debug']:false;
         $this->_logcallback = isset($options['logcallback'])?$options['logcallback']:false;
+    }
+
+    /**
+     * 设置缓存
+     * @param $cache
+     */
+    public static function setCache( WechatCacheInterface $cache ){
+        static::$cache = $cache;
     }
 
     /**
@@ -907,6 +917,10 @@ class Wechat
             return $this->access_token;
         }
         //TODO: get the cache access_token
+        if( static::$cache && ( $inCache = static::$cache->get( 'wechat-access-token-' . $appid ) ) ){
+            $this->access_token = $inCache;
+            return $this->access_token;
+        }
         $result = $this->http_get(self::API_URL_PREFIX.self::AUTH_URL.'appid='.$appid.'&secret='.$appsecret);
         if ($result)
         {
@@ -919,6 +933,9 @@ class Wechat
             $this->access_token = $json['access_token'];
             $expire = $json['expires_in'] ? intval($json['expires_in'])-100 : 3600;
             //TODO: cache access_token
+            if( static::$cache ){
+                static::$cache->put( 'wechat-access-token-' . $appid , $this->access_token , $expire );
+            }
             return $this->access_token;
         }
         return false;
@@ -929,9 +946,14 @@ class Wechat
      * @param string $appid
      */
     public function resetAuth($appid=''){
-        if (!$appid) $appid = $this->appid;
+        if (!$appid){
+            $appid = $this->appid;
+        }
         $this->access_token = '';
         //TODO: remove cache
+        if( static::$cache ){
+            static::$cache->forget( 'wechat-access-token-' . $appid );
+        }
         return true;
     }
 
@@ -940,47 +962,7 @@ class Wechat
      * @param array $arr
      */
     static function json_encode($arr) {
-        $parts = array ();
-        $is_list = false;
-        //Find out if the given array is a numerical array
-        $keys = array_keys ( $arr );
-        $max_length = count ( $arr ) - 1;
-        if (($keys [0] === 0) && ($keys [$max_length] === $max_length )) { //See if the first key is 0 and last key is length - 1
-            $is_list = true;
-            for($i = 0; $i < count ( $keys ); $i ++) { //See if each key correspondes to its position
-                if ($i != $keys [$i]) { //A key fails at position check.
-                    $is_list = false; //It is an associative array.
-                    break;
-                }
-            }
-        }
-        foreach ( $arr as $key => $value ) {
-            if (is_array ( $value )) { //Custom handling for arrays
-                if ($is_list)
-                    $parts [] = self::json_encode ( $value ); /* :RECURSION: */
-                else
-                    $parts [] = '"' . $key . '":' . self::json_encode ( $value ); /* :RECURSION: */
-            } else {
-                $str = '';
-                if (! $is_list)
-                    $str = '"' . $key . '":';
-                //Custom handling for multiple data types
-                if (!is_string ( $value ) && is_numeric ( $value ) && $value<2000000000)
-                    $str .= $value; //Numbers
-                elseif ($value === false)
-                    $str .= 'false'; //The booleans
-                elseif ($value === true)
-                    $str .= 'true';
-                else
-                    $str .= '"' . addslashes ( $value ) . '"'; //All other things
-                // :TODO: Is there any more datatype we should be in the lookout for? (Object?)
-                $parts [] = $str;
-            }
-        }
-        $json = implode ( ',', $parts );
-        if ($is_list)
-            return '[' . $json . ']'; //Return numerical JSON
-        return '{' . $json . '}'; //Return associative JSON
+        return json_encode( $arr , JSON_UNESCAPED_UNICODE );
     }
 
     /**
@@ -1057,7 +1039,9 @@ class Wechat
      * 8、location_select：弹出地理位置选择器
      */
     public function createMenu($data){
-        if (!$this->access_token && !$this->checkAuth()) return false;
+        if (!$this->access_token && !$this->checkAuth()){
+            return false;
+        }
         $result = $this->http_post(self::API_URL_PREFIX.self::MENU_CREATE_URL.'access_token='.$this->access_token,self::json_encode($data));
         if ($result)
         {
