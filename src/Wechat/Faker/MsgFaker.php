@@ -58,7 +58,7 @@ XML;
                 $this->xml = <<<XML
 <xml>
 {$this->xml}
-  <Encrypt><![CDATA[{$msg_encrypt}]]</Encrypt>
+  <Encrypt><![CDATA[{$msg_encrypt}]]></Encrypt>
 </xml>
 XML;
             }

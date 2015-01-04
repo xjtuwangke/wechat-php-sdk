@@ -73,11 +73,18 @@ class Faker {
     }
 
     public function postXML( $xml ){
-        $snoopy = new Snoopy();
-        $snoopy->_connect( $fp );
-        $snoopy->_httprequest($this->_url, $fp, $this->_url, 'POST', "text/xml", $xml);
-        $response = $snoopy->results;
-        return $response;
+        $header[]="Content-Type: text/xml; charset=utf-8";
+        $header[]="Content-Length: ".strlen($xml);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        $output = curl_exec($ch);
+        curl_close( $ch );
+        return $output;
     }
 
 }
