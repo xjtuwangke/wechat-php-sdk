@@ -41,6 +41,11 @@ class Faker {
         $this->timestamp = time();
         $this->nonce = rand( 111111 , 999999 );
         $this->_url = static::$url . '?timestamp=' . $this->timestamp . '&nonce=' . $this->nonce ;
+
+        $tmpArray = [ $this->_token , $this->nonce , $this->timestamp ];
+
+        sort( $tmpArray , SORT_STRING );
+        $this->_url.= '&signature=' . sha1( implode( '' , $tmpArray ) );
     }
 
     public function fake(){
