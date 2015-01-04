@@ -33,6 +33,38 @@ class MsgFaker extends Faker{
 
     public $crypt_safe_mode = true;
 
+    public $message = array();
+
+    public function fake(){
+        $this->generateXML();
+        $this->checkMsgEncrypt();
+    }
+
+    /**
+     * 根据message生成内容
+     */
+    public function generateXML(){
+        $content = '';
+        foreach( $this->message as $key => $val ){
+            $content.= <<<XML
+ <{$key}><![CDATA[{$val}]]></{$key}>
+XML;
+
+        }
+        $time = $this->timestamp;
+        $this->msgId = $this->msgId?:rand(1111111111,999999999);
+        $this->xml = <<<XML
+ <ToUserName><![CDATA[{$this->toUser}]]></ToUserName>
+ <FromUserName><![CDATA[{$this->fromUser}]]></FromUserName>
+ <CreateTime>{$time}</CreateTime>
+{$content}
+ <MsgId>{$this->msgId}</MsgId>
+XML;
+    }
+
+    /**
+     * 检测是否加密
+     */
     public function checkMsgEncrypt(){
         if( $this->crypt_mode === static::CRYPT_MODE_AES ){
             $xml = <<<XML
