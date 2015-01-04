@@ -47,12 +47,13 @@ XML;
             $tmpArray = array(
                 'token' => $this->_token ,
                 'timestamp' => $this->timestamp ,
-                'nonce' => $this->nounce ,
+                'nonce' => $this->nonce ,
                 'msg_encrypt' => $msg_encrypt ,
             );
             sort( $tmpArray , SORT_STRING );
+
             $msg_signature = sha1( implode( '' , $tmpArray ) );
-            $this->_url.= '&msg_signature=' . $msg_signature;
+            $this->_url.= '&msg_signature=' . $msg_signature . '&encrypt_type=aes';
 
             if( $this->crypt_safe_mode ){
                 $this->xml = <<<XML

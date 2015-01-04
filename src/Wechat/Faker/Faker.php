@@ -39,8 +39,8 @@ class Faker {
         $this->_appid = static::$appid;
         $this->_encodingAESKey = static::$encodingAESKey;
         $this->timestamp = time();
-        $this->nounce = rand( 111111 , 999999 );
-        $this->_url = static::$url . '?timestamp=' . $this->timestamp . '&nounce' . $this->nounce ;
+        $this->nonce = rand( 111111 , 999999 );
+        $this->_url = static::$url . '?timestamp=' . $this->timestamp . '&nonce=' . $this->nonce ;
     }
 
     public function fake(){

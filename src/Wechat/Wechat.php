@@ -159,6 +159,7 @@ class Wechat
         $token = $this->token;
         $tmpArr = array($token, $timestamp, $nonce,$str);
         sort($tmpArr, SORT_STRING);
+
         $tmpStr = implode( $tmpArr );
         $tmpStr = sha1( $tmpStr );
 
