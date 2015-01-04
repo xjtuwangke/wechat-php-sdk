@@ -17,14 +17,14 @@ class VerifyFaker extends Faker{
 
     public function fake(){
         $this->requestBody = array(
-            'timestamp' => time() ,
-            'nonce' => rand( 100000 , 999999 ) ,
-            'token' => static::$token ,
+            'timestamp' => $this->timestamp ,
+            'nonce' => $this->nounce ,
+            'token' => $this->_token ,
         );
-        ksort( $this->requestBody );
+        sort( $this->requestBody , SORT_STRING );
         $this->requestBody['signature'] = sha1( implode( '' , $this->requestBody ) );
         unset( $this->requestBody['token'] );
-        $this->requestBody['echostr'] = substr( 0 , 12 , sha1( rand( 0 , 65535 ) ) );
+        $this->_url .= '&echostr=' .  substr( 0 , 12 , sha1( rand( 0 , 65535 ) ) );
     }
 
 }
