@@ -67,7 +67,7 @@ XML;
                 $this->xml = <<<XML
 <xml>
   <ToUserName><![CDATA[{$this->toUser}]]></ToUserName>
-  <Encrypt><![CDATA[{$msg_encrypt}]]</Encrypt>
+  <Encrypt><![CDATA[{$msg_encrypt}]]></Encrypt>
 </xml>
 XML;
             }
