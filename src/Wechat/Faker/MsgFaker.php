@@ -25,14 +25,6 @@ class MsgFaker extends Faker{
 
     public $xml = null;
 
-    const CRYPT_MODE_NONE = 0;
-
-    const CRYPT_MODE_AES = 1;
-
-    public $crypt_mode = self::CRYPT_MODE_NONE;
-
-    public $crypt_safe_mode = true;
-
     public $message = array();
 
     public function fake(){
@@ -66,7 +58,7 @@ XML;
      * 检测是否加密
      */
     public function checkMsgEncrypt(){
-        if( $this->crypt_mode === static::CRYPT_MODE_AES ){
+        if( $this->config->crypt_mode === Config::CRYPT_MODE_AES ){
             $xml = <<<XML
 <xml>
 {$this->xml}
@@ -77,7 +69,7 @@ XML;
             //msg_signature=sha1(sort(Token、timestamp、nonce, msg_encrypt))
 
             $tmpArray = array(
-                'token' => $this->_token ,
+                'token' => $this->config->token ,
                 'timestamp' => $this->timestamp ,
                 'nonce' => $this->nonce ,
                 'msg_encrypt' => $msg_encrypt ,
@@ -85,9 +77,10 @@ XML;
             sort( $tmpArray , SORT_STRING );
 
             $msg_signature = sha1( implode( '' , $tmpArray ) );
-            $this->_url.= '&msg_signature=' . $msg_signature . '&encrypt_type=aes';
+            $this->getParameters['msg_signature'] = $msg_signature;
+            $this->getParameters['encrypt_type'] = 'aes';
 
-            if( $this->crypt_safe_mode ){
+            if( $this->config->crypt_safe_mode ){
                 $this->xml = <<<XML
 <xml>
 {$this->xml}

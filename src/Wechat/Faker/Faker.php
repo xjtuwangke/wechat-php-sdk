@@ -18,34 +18,43 @@ use Wechat\Encrypt\Prpcrypt;
  */
 class Faker {
 
-    public static $token = null;
-
-    public static $url = null;
-
-    public static $appid = null;
-
-    public static $encodingAESKey = null;
-
     public $method = 'GET';
 
     public $requestBody = null;
+
+    public $getParameters = array();
 
     public $response = null;
 
     public $xml = null;
 
-    public function __construct(){
-        $this->_token = static::$token;
-        $this->_appid = static::$appid;
-        $this->_encodingAESKey = static::$encodingAESKey;
+    public $config = null;
+
+    public $timestamp = null;
+
+    public function __construct( Config $config = null ){
+        if( $config ){
+            $this->config = $config;
+        }
+        else{
+            $this->config = new Config;
+        }
         $this->timestamp = time();
         $this->nonce = rand( 111111 , 999999 );
-        $this->_url = static::$url . '?timestamp=' . $this->timestamp . '&nonce=' . $this->nonce ;
+    }
 
-        $tmpArray = [ $this->_token , $this->nonce , $this->timestamp ];
-
+    public function generateURL(){
+        $this->getParameters[ 'timestamp' ] = $this->timestamp;
+        $this->getParameters[ 'nonce' ] = $this->nonce;
+        $tmpArray = [ $this->config->token , $this->nonce , $this->timestamp ];
         sort( $tmpArray , SORT_STRING );
-        $this->_url.= '&signature=' . sha1( implode( '' , $tmpArray ) );
+        $this->getParameters[ 'signature' ] = sha1( implode( '' , $tmpArray ) );
+        $requestArray = array();
+        foreach( $this->getParameters as $key => $val ){
+            $val = urlencode( $val );
+            $requestArray[] = "{$key}={$val}";
+        }
+        return $this->config->url . '?' . implode( '&' , $requestArray );
     }
 
     public function fake(){
@@ -72,7 +81,7 @@ class Faker {
     public function sendForm(){
         $snoopy = new Snoopy();
         $snoopy->_submit_method = $this->method;
-        $snoopy->submit( $this->_url , $this->requestBody );
+        $snoopy->submit( $this->generateURL() , $this->requestBody );
         $response = $snoopy->results;
         return $response;
     }
@@ -81,7 +90,7 @@ class Faker {
         $header[]="Content-Type: text/xml; charset=utf-8";
         $header[]="Content-Length: ".strlen($xml);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->_url);
+        curl_setopt($ch, CURLOPT_URL, $this->generateURL());
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
