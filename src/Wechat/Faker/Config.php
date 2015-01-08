@@ -29,14 +29,10 @@ class Config {
 
     public static $default = array();
 
-    public function __get( $key ){
-        if( $this->{$key} ){
-            return $this->{$key};
+    public function __construct(){
+        foreach( static::$default as $key => $val ){
+            $this->{$key} = $val;
         }
-        if( array_key_exists( $key , static::$default ) ){
-            return static::$default[$key];
-        }
-        return null;
     }
 
 }
